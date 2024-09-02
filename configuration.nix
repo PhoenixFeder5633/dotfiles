@@ -116,6 +116,7 @@
     zip
     gzip
     gnutar
+    mpv
   #  wget
     kitty
     rofi-wayland
@@ -132,6 +133,11 @@
   #   enableSSHSupport = true;
   # };
 
+  stylix = {
+    enable = true;
+    image = /home/phoef/Pictures/Frieren.jpg;
+  };
+
   services.flatpak = {
     enable = true;
 
@@ -147,6 +153,7 @@
       { appId = "com.usebottles.bottles"; origin = "flathub"; }
       { appId = "com.heroicgameslauncher.hgl"; origin = "flathub"; }
       { appId = "org.ryujinx.Ryujinx"; origin = "flathub"; }
+      { appId = "com.visualstudio.code"; origin = "flathub"; }
     ];
   };
 
