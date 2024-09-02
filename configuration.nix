@@ -117,6 +117,7 @@
     gzip
     gnutar
     mpv
+    python313
   #  wget
     kitty
     rofi-wayland
@@ -133,10 +134,10 @@
   #   enableSSHSupport = true;
   # };
 
-  stylix = {
-    enable = true;
-    image = /home/phoef/Pictures/Frieren.jpg;
-  };
+  #stylix = {
+  #  enable = true;
+  #  image = /home/phoef/Pictures/Frieren.jpg;
+  #};
 
   services.flatpak = {
     enable = true;
