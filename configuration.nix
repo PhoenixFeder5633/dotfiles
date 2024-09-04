@@ -2,12 +2,13 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      "${inputs.home-manager}/nixos"
     ];
 
   # Bootloader.
@@ -73,7 +74,6 @@
 
   # Enable sound with pipewire.
   hardware.pulseaudio.enable = false;
-  sound.enable = true;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -101,6 +101,19 @@
     ];
   };
 
+  home-manager.users.phoef = {
+    programs.git = {
+      enable = true;
+      userName = "PhoenixFeder";
+      userEmail = "phoenixfeder5633@gmail.com";
+      extraConfig.init.defaultBranch = "main";
+    };
+    home.stateVersion = "24.05";
+    home.username = "phoef";
+    home.homeDirectory = "/home/phoef";
+    programs.home-manager.enable = true;
+  };
+
   # Install firefox.
   programs.firefox.enable = true;
 
@@ -110,20 +123,21 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    #dev
+    vim
     git
     jdk
+    python313
+    #files
+    mpv
+    wget
     zip
     gzip
     gnutar
-    mpv
-    python313
-  #  wget
+    #hyprland
     kitty
     rofi-wayland
     waybar
-    dunst
-    libnotify
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
