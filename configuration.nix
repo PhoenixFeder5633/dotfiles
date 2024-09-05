@@ -10,6 +10,46 @@
       ./hardware-configuration.nix
       "${inputs.home-manager}/nixos"
     ];
+  
+  # Enable OpenGL
+  hardware.opengl = {
+    enable = true;
+  };
+
+  # Load nvidia driver for Xorg and Wayland
+  services.xserver.videoDrivers = ["nvidia"];
+  
+  hardware.nvidia = {
+
+    # Modesetting is required.
+    modesetting.enable = true;
+
+    # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
+    # Enable this if you have graphical corruption issues or application crashes after waking
+    # up from sleep. This fixes it by saving the entire VRAM memory to /tmp/ instead 
+    # of just the bare essentials.
+    powerManagement.enable = false;
+
+    # Fine-grained power management. Turns off GPU when not in use.
+    # Experimental and only works on modern Nvidia GPUs (Turing or newer).
+    powerManagement.finegrained = false;
+
+    # Use the NVidia open source kernel module (not to be confused with the
+    # independent third-party "nouveau" open source driver).
+    # Support is limited to the Turing and later architectures. Full list of 
+    # supported GPUs is at: 
+    # https://github.com/NVIDIA/open-gpu-kernel-modules#compatible-gpus 
+    # Only available from driver 515.43.04+
+    # Currently alpha-quality/buggy, so false is currently the recommended setting.
+    open = false;
+
+    # Enable the Nvidia settings menu,
+	# accessible via `nvidia-settings`.
+    nvidiaSettings = true;
+
+    # Optionally, you may need to select the appropriate driver version for your specific GPU.
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
+  };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -112,6 +152,124 @@
     home.username = "phoef";
     home.homeDirectory = "/home/phoef";
     programs.home-manager.enable = true;
+    wayland.windowManager.hyprland = {
+      enable = true;
+      extraConfig = ''
+        monitor = HDMI-A-1, 1920x1080@74.97, 0x0, 1
+
+        input {
+          kb_layout = de
+          kb_variant =
+          kb_model =
+          kb_options =
+          kb_rules =
+
+          follow_mouse = 1
+
+          touchpad {
+            natural_scroll = false
+          }
+
+          sensitivity = 0
+        }
+
+        general {
+          gaps_in = 5
+          gaps_out = 20
+          border_size = 2
+          col.active_border = rgba(33ccffee) rgba(00ff99ee) 45deg
+          col.inactive_border = rgba(595959aa)
+
+          layout = dwindle
+        }
+
+        decoration {
+          rounding = 10
+          blur {
+            enabled = true
+            size = 3
+            passes = 1
+            new_optimizations = true
+          }
+          
+
+          drop_shadow = true
+          shadow_range = 4
+          shadow_render_power = 3
+          col.shadow = rgba(1a1a1aee)
+        }
+
+        animations {
+          enabled = yes
+
+          bezier = ease, 0.4, 0.02, 0.21, 1
+
+          animation = windows, 1, 3.5, ease, slide
+          animation = windowsOut, 1, 3.5, ease, slide
+          animation = border, 1, 6, default
+          animation = fade, 1, 3, ease
+        }
+
+        dwindle {
+          pseudotile = yes
+          preserve_split = yes
+        }
+
+        gestures {
+          workspace_swipe = false
+        }
+
+        misc { 
+          force_default_wallpaper = -1 # Set to 0 or 1 to disable the anime mascot wallpapers
+          disable_hyprland_logo = false # If true disables the random hyprland logo / anime girl background. :(
+        }
+
+        binds {
+          scroll_event_delay = 1
+        }
+
+        bind = SUPER, RETURN, exec, kitty
+        bind = SUPER, D, exec, killall rofi || rofi -show drun -normal-window
+        bind = SUPER, W, exec, firefox
+
+        bind = SUPER, Q, killactive,
+
+        bind = SUPER, 1, workspace, 1
+        bind = SUPER, 2, workspace, 2
+        bind = SUPER, 3, workspace, 3
+        bind = SUPER, 4, workspace, 4
+        bind = SUPER, 5, workspace, 5
+        bind = SUPER, 6, workspace, 6
+        bind = SUPER, 7, workspace, 7
+        bind = SUPER, 8, workspace, 8
+        bind = SUPER, 9, workspace, 9
+        bind = SUPER, 0, workspace, 10
+
+        bind = SUPER SHIFT, 1, movetoworkspace, 1
+        bind = SUPER SHIFT, 2, movetoworkspace, 2
+        bind = SUPER SHIFT, 3, movetoworkspace, 3
+        bind = SUPER SHIFT, 4, movetoworkspace, 4
+        bind = SUPER SHIFT, 5, movetoworkspace, 5
+        bind = SUPER SHIFT, 6, movetoworkspace, 6
+        bind = SUPER SHIFT, 7, movetoworkspace, 7
+        bind = SUPER SHIFT, 8, movetoworkspace, 8
+        bind = SUPER SHIFT, 9, movetoworkspace, 9
+        bind = SUPER SHIFT, 0, movetoworkspace, 10
+
+        bind = SUPER, mouse_up, workspace, e+1
+        bind = SUPER, mouse_down, workspace, e-1
+
+        bind = SUPER SHIFT, mouse_up, movetoworkspace, e+1
+        bind = SUPER SHIFT, mouse_down, movetoworkspace, e-1
+
+        bind = SUPER, mouse:275, togglefloating
+        bind = SUPER, mouse:276, killactive
+        bind = SUPER, mouse:274, fullscreen
+
+        bindm = SUPER, mouse:272, movewindow
+        bindm = SUPER, mouse:273, resizewindow
+      '';
+    };
   };
 
   # Install firefox.
@@ -138,6 +296,7 @@
     kitty
     rofi-wayland
     waybar
+    wev
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
