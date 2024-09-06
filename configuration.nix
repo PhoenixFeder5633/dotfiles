@@ -156,14 +156,17 @@
       enable = true;
       extraConfig = ''
         monitor = HDMI-A-1, 1920x1080@74.97, 0x0, 1
+        monitor = Unknown-1, disable
 
         env = LIBVA_DRIVER_NAME,nvidia
         env = XDG_SESSION_TYPE,wayland
         env = GBM_BACKEND,nvidia-drm
         env = __GLX_VENDOR_LIBRARY_NAME,nvidia
 
-        exec-once = swww-daemon --format xrgb
+        exec = swww kill ; swww-daemon --format xrgb
         exec = swww img ~/Pictures/Frieren.jpg
+
+        exec = pkill waybar ; waybar
 
         cursor {
           no_hardware_cursors = true
@@ -205,7 +208,7 @@
           }
           
           active_opacity = 0.9
-          inactive_opacity = 0.8
+          inactive_opacity = 0.85
           fullscreen_opacity = 0.95
 
           drop_shadow = true
@@ -235,8 +238,8 @@
         }
 
         misc { 
-          force_default_wallpaper = -1 # Set to 0 or 1 to disable the anime mascot wallpapers
-          disable_hyprland_logo = false # If true disables the random hyprland logo / anime girl background. :(
+          force_default_wallpaper = 0 # Set to 0 or 1 to disable the anime mascot wallpapers
+          disable_hyprland_logo = true # If true disables the random hyprland logo / anime girl background. :(
         }
 
         binds {
@@ -250,32 +253,32 @@
         bind = SUPER, Q, killactive,
 
         bind = SUPER, 1, workspace, 1
-        bind = SUPER, 2, workspace, 3
-        bind = SUPER, 3, workspace, 5
-        bind = SUPER, 4, workspace, 7
-        bind = SUPER, 5, workspace, 9
-        bind = SUPER, 6, workspace, 11
-        bind = SUPER, 7, workspace, 13
-        bind = SUPER, 8, workspace, 15
-        bind = SUPER, 9, workspace, 17
-        bind = SUPER, 0, workspace, 19
+        bind = SUPER, 2, workspace, 2
+        bind = SUPER, 3, workspace, 3
+        bind = SUPER, 4, workspace, 4
+        bind = SUPER, 5, workspace, 5
+        bind = SUPER, 6, workspace, 6
+        bind = SUPER, 7, workspace, 7
+        bind = SUPER, 8, workspace, 8
+        bind = SUPER, 9, workspace, 9
+        bind = SUPER, 0, workspace, 10
 
         bind = SUPER SHIFT, 1, movetoworkspace, 1
-        bind = SUPER SHIFT, 2, movetoworkspace, 3
-        bind = SUPER SHIFT, 3, movetoworkspace, 5
-        bind = SUPER SHIFT, 4, movetoworkspace, 7
-        bind = SUPER SHIFT, 5, movetoworkspace, 9
-        bind = SUPER SHIFT, 6, movetoworkspace, 11
-        bind = SUPER SHIFT, 7, movetoworkspace, 13
-        bind = SUPER SHIFT, 8, movetoworkspace, 15
-        bind = SUPER SHIFT, 9, movetoworkspace, 17
-        bind = SUPER SHIFT, 0, movetoworkspace, 19
+        bind = SUPER SHIFT, 2, movetoworkspace, 2
+        bind = SUPER SHIFT, 3, movetoworkspace, 3
+        bind = SUPER SHIFT, 4, movetoworkspace, 4
+        bind = SUPER SHIFT, 5, movetoworkspace, 5
+        bind = SUPER SHIFT, 6, movetoworkspace, 6
+        bind = SUPER SHIFT, 7, movetoworkspace, 7
+        bind = SUPER SHIFT, 8, movetoworkspace, 8
+        bind = SUPER SHIFT, 9, movetoworkspace, 9
+        bind = SUPER SHIFT, 0, movetoworkspace, 10
 
-        bind = SUPER, mouse_up, workspace, e+2
-        bind = SUPER, mouse_down, workspace, e-2
+        bind = SUPER, mouse_up, workspace, e+1
+        bind = SUPER, mouse_down, workspace, e-1
 
-        bind = SUPER SHIFT, mouse_up, movetoworkspace, e+2
-        bind = SUPER SHIFT, mouse_down, movetoworkspace, e-2
+        bind = SUPER SHIFT, mouse_up, movetoworkspace, e+1
+        bind = SUPER SHIFT, mouse_down, movetoworkspace, e-1
 
         bind = SUPER, mouse:275, togglefloating
         bind = SUPER, mouse:276, killactive
