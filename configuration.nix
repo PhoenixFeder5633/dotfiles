@@ -14,6 +14,8 @@
   # Enable OpenGL
   hardware.opengl = {
     enable = true;
+    driSupport = true;
+    driSupport32Bit = true;
   };
 
   # Load nvidia driver for Xorg and Wayland
@@ -321,10 +323,18 @@
         bind = SUPER, mouse:274, fullscreen
 
         bindm = SUPER, mouse:272, movewindow
-        bindm = SUPER, mouse:273, resizewindow
+        bindm = SUPER, mouse:273, resizewindow 1
+        bindm = SUPER SHIFT, mouse:273, resizewindow 2
       '';
     };
   };
+
+  fileSystems."/mnt/A" = {
+    device = "/dev/sdb1";
+    fsType = "ntfs-3g";
+    options = [ "defaults" ];
+  };
+
 
   # Install firefox.
   programs.firefox.enable = true;
@@ -346,6 +356,16 @@
     zip
     gzip
     gnutar
+    ntfs3g
+    #gaming
+    mangohud
+    gamemode
+    libnvidia-container
+    vulkan-tools
+    mesa
+    mesa_drivers
+    vulkan-loader
+    glfw
     #hyprland
     kitty
     rofi-wayland
@@ -384,6 +404,7 @@
       { appId = "com.heroicgameslauncher.hgl"; origin = "flathub"; }
       { appId = "org.ryujinx.Ryujinx"; origin = "flathub"; }
       { appId = "com.visualstudio.code"; origin = "flathub"; }
+      { appId = "dev.vencord.Vesktop"; origin = "flathub"; }
     ];
   };
 
