@@ -405,6 +405,8 @@
       { appId = "org.ryujinx.Ryujinx"; origin = "flathub"; }
       { appId = "com.visualstudio.code"; origin = "flathub"; }
       { appId = "dev.vencord.Vesktop"; origin = "flathub"; }
+      { appId = "com.atlauncher.ATLauncher"; origin = "flathub"; }
+      { appId = "com.lunarclient.LunarClient"; origin = "flathub"; }
     ];
   };
 
