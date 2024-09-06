@@ -152,6 +152,39 @@
     home.username = "phoef";
     home.homeDirectory = "/home/phoef";
     programs.home-manager.enable = true;
+    programs.waybar = {
+      enable = true;
+      settings = [{
+        layer = "bottom";
+        position = "top";
+        modules-center = [
+          "hyprland/workspaces"
+        ];
+        modules-right = [
+          "clock"
+          "tray"
+        ];
+        "hyprland/workspaces" = {
+          format = "{name}";
+          format-icons = {
+            default = " ";
+            active = " ";
+            urgent = " ";
+          };
+          on-scroll-up = "hyprctl dispatch workspace e+1";
+          on-scroll-down = "hyprctl dispatch workspace e-1";
+        };
+        "clock" = {
+          "interval" = 1;
+          "format" = "{:%T  %a %d.%m.%Y}";
+          "tooltip" = true;
+          "tooltip-format" = "{=%A; %d %B %Y}\n<tt>{calendar}</tt>";
+        };
+        "tray" = {
+          spacing = 12;
+        };
+      }];
+    };
     wayland.windowManager.hyprland = {
       enable = true;
       extraConfig = ''
@@ -188,6 +221,8 @@
           sensitivity = 0
         }
 
+        windowrule = opacity 1.0, class:^(mpv)$
+
         general {
           gaps_in = 5
           gaps_out = 10
@@ -207,9 +242,9 @@
             new_optimizations = true
           }
           
-          active_opacity = 0.9
-          inactive_opacity = 0.85
-          fullscreen_opacity = 0.95
+          active_opacity = 0.95
+          inactive_opacity = 0.9
+          fullscreen_opacity = 1
 
           drop_shadow = true
           shadow_range = 4
@@ -241,6 +276,7 @@
           force_default_wallpaper = 0 # Set to 0 or 1 to disable the anime mascot wallpapers
           disable_hyprland_logo = true # If true disables the random hyprland logo / anime girl background. :(
         }
+
 
         binds {
           scroll_event_delay = 1
