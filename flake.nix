@@ -7,6 +7,7 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.4.1";
     stylix.url = "github:danth/stylix/release-24.05";
+    nix-autobahn.url = "github:Lassulus/nix-autobahn";
   };
 
   outputs = { self, nixpkgs, home-manager, nix-flatpak, ... }@inputs:

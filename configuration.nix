@@ -329,11 +329,11 @@
     };
   };
 
-  fileSystems."/mnt/A" = {
-    device = "/dev/sdb1";
-    fsType = "ntfs-3g";
-    options = [ "defaults" ];
-  };
+  #fileSystems."/mnt/A" = {
+  #  device = "/dev/sdb1";
+  #  fsType = "ntfs-3g";
+  #  options = [ "defaults" ];
+  #};
 
 
   # Install firefox.
@@ -350,10 +350,15 @@
     git
     jdk
     python313
+    qemu
+    quickemu
+    rpm-ostree
+    inputs.nix-autobahn.packages.x86_64-linux.nix-autobahn
     #files
     mpv
     wget
     zip
+    unzip
     gzip
     gnutar
     ntfs3g
@@ -410,6 +415,7 @@
     ];
   };
 
+  virtualisation.waydroid.enable = true;
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
