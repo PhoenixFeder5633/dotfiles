@@ -1,5 +1,5 @@
 {
-  description = "Test Einhorn";
+  description = "My NixOS Config";
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-24.05";
@@ -8,6 +8,8 @@
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.4.1";
     stylix.url = "github:danth/stylix/release-24.05";
     nix-autobahn.url = "github:Lassulus/nix-autobahn";
+    fabricbar.url = "/home/phoef/Projects/fabricbar";
+    fabricbar.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = { self, nixpkgs, home-manager, nix-flatpak, ... }@inputs:

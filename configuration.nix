@@ -153,6 +153,9 @@
     home.stateVersion = "24.05";
     home.username = "phoef";
     home.homeDirectory = "/home/phoef";
+    home.packages = [
+      inputs.fabricbar.packages.x86_64-linux.default
+    ];
     programs.home-manager.enable = true;
     programs.waybar = {
       enable = true;
@@ -201,7 +204,7 @@
         exec = swww kill ; swww-daemon --format xrgb
         exec = swww img ~/Pictures/Frieren.jpg
 
-        exec = pkill waybar ; waybar
+        exec = pkill fabricbar ; fabricbar
 
         cursor {
           no_hardware_cursors = true
