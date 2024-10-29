@@ -2,20 +2,17 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, inputs, ... }:
-
-{
+{ config, pkgs, lib, inputs, ... }: {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      "${inputs.home-manager}/nixos"
+      ./wm/hypr.nix
     ];
   
   # Enable OpenGL
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
-    driSupport = true;
-    driSupport32Bit = true;
+    enable32Bit = true;
   };
 
   # Load nvidia driver for Xorg and Wayland
@@ -54,8 +51,16 @@
   };
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+	boot.loader.efi.efiSysMountPoint = "/boot/efi";
+	boot.loader.grub = {
+		enable = true;
+		useOSProber = true;
+		device = "nodev";
+		efiSupport = true;
+	};
+
+	boot.kernelPackages = pkgs.linuxPackages_zen;
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -90,7 +95,6 @@
 
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -104,6 +108,8 @@
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
+	services.usbmuxd.enable = true;
+
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
@@ -111,8 +117,9 @@
 
   xdg.portal = {
     enable = true;
-    #extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   };
+
 
   # Enable sound with pipewire.
   hardware.pulseaudio.enable = false;
@@ -130,6 +137,10 @@
     #media-session.enable = true;
   };
 
+  fonts.packages = with pkgs; [
+    nerdfonts
+  ];
+
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
@@ -137,210 +148,72 @@
   users.users.phoef = {
     isNormalUser = true;
     description = "PhoenixFeder";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "libvirtd" ];
     packages = with pkgs; [
-    #  thunderbird
+			inputs.nixvim.packages.${pkgs.system}.default
     ];
   };
 
   home-manager.users.phoef = {
+    imports = [
+    ];
     programs.git = {
       enable = true;
       userName = "PhoenixFeder";
       userEmail = "phoenixfeder5633@gmail.com";
       extraConfig.init.defaultBranch = "main";
     };
+    programs.obs-studio = {
+      enable = true;
+      plugins = [
+        pkgs.obs-studio-plugins.obs-websocket
+      ];
+    };
+    programs.kitty = {
+      enable = true;
+      font = {
+        name = "JetBrainsMono Nerd Font Mono";
+      };
+      settings = {
+        confirm_os_window_close = "0";
+        disable_ligatures = "cursor";
+				cursor_blink_interval = "0";
+				copy_on_select = "no";
+				open_url_with = "xdg-open";
+				enable_audio_bell = "no";
+				font_size = "11.5";
+				background_opacity = "0.5";
+      };
+    };
+		home.pointerCursor = {
+			gtk.enable = true;
+			x11.enable = true;
+			package = pkgs.bibata-cursors;
+			name = "Bibata-Modern-Ice";
+			size = 22;
+		};
+		dconf.settings = {
+			"org/virt-manager/virt-manager/connections" = {
+				autoconnect = ["qemu:///system"];
+				uris = ["qemu:///system"];
+			};
+		};
     home.stateVersion = "24.05";
     home.username = "phoef";
     home.homeDirectory = "/home/phoef";
     home.packages = [
-      inputs.fabricbar.packages.x86_64-linux.default
     ];
     programs.home-manager.enable = true;
-    programs.waybar = {
-      enable = true;
-      settings = [{
-        layer = "bottom";
-        position = "top";
-        modules-center = [
-          "hyprland/workspaces"
-        ];
-        modules-right = [
-          "clock"
-          "tray"
-        ];
-        "hyprland/workspaces" = {
-          format = "{name}";
-          format-icons = {
-            default = " ";
-            active = " ";
-            urgent = " ";
-          };
-          on-scroll-up = "hyprctl dispatch workspace e+1";
-          on-scroll-down = "hyprctl dispatch workspace e-1";
-        };
-        "clock" = {
-          "interval" = 1;
-          "format" = "{:%T  %a %d.%m.%Y}";
-          "tooltip" = true;
-          "tooltip-format" = "{=%A; %d %B %Y}\n<tt>{calendar}</tt>";
-        };
-        "tray" = {
-          spacing = 12;
-        };
-      }];
-    };
-    wayland.windowManager.hyprland = {
-      enable = true;
-      extraConfig = ''
-        monitor = HDMI-A-1, 1920x1080@74.97, 0x0, 1
-        monitor = Unknown-1, disable
-
-        env = LIBVA_DRIVER_NAME,nvidia
-        env = XDG_SESSION_TYPE,wayland
-        env = GBM_BACKEND,nvidia-drm
-        env = __GLX_VENDOR_LIBRARY_NAME,nvidia
-
-        exec = swww kill ; swww-daemon --format xrgb
-        exec = swww img ~/Pictures/Frieren.jpg
-
-        exec = pkill fabricbar ; fabricbar
-
-        cursor {
-          no_hardware_cursors = true
-        }
-
-        input {
-          kb_layout = de
-          kb_variant =
-          kb_model =
-          kb_options =
-          kb_rules =
-
-          follow_mouse = 1
-
-          touchpad {
-            natural_scroll = false
-          }
-
-          sensitivity = 0
-        }
-
-        windowrule = opacity 1.0, class:^(mpv)$
-
-        general {
-          gaps_in = 5
-          gaps_out = 10
-          border_size = 2
-          col.active_border = rgba(33ccffee) rgba(00ff99ee) 45deg
-          col.inactive_border = rgba(595959aa)
-
-          layout = dwindle
-        }
-
-        decoration {
-          rounding = 10
-          blur {
-            enabled = true
-            size = 3
-            passes = 1
-            new_optimizations = true
-          }
-          
-          active_opacity = 0.95
-          inactive_opacity = 0.9
-          fullscreen_opacity = 1
-
-          drop_shadow = true
-          shadow_range = 4
-          shadow_render_power = 3
-          col.shadow = rgba(1a1a1aee)
-        }
-
-        animations {
-          enabled = yes
-
-          bezier = ease, 0.4, 0.02, 0.21, 1
-
-          animation = windows, 1, 3.5, ease, slide
-          animation = windowsOut, 1, 3.5, ease, slide
-          animation = border, 1, 6, default
-          animation = fade, 1, 3, ease
-        }
-
-        dwindle {
-          pseudotile = yes
-          preserve_split = yes
-        }
-
-        gestures {
-          workspace_swipe = false
-        }
-
-        misc { 
-          force_default_wallpaper = 0 # Set to 0 or 1 to disable the anime mascot wallpapers
-          disable_hyprland_logo = true # If true disables the random hyprland logo / anime girl background. :(
-        }
-
-
-        binds {
-          scroll_event_delay = 1
-        }
-
-        bind = SUPER, RETURN, exec, kitty
-        bind = SUPER, D, exec, killall rofi || rofi -show drun -normal-window
-        bind = SUPER, W, exec, firefox
-
-        bind = SUPER, Q, killactive,
-
-        bind = SUPER, 1, workspace, 1
-        bind = SUPER, 2, workspace, 2
-        bind = SUPER, 3, workspace, 3
-        bind = SUPER, 4, workspace, 4
-        bind = SUPER, 5, workspace, 5
-        bind = SUPER, 6, workspace, 6
-        bind = SUPER, 7, workspace, 7
-        bind = SUPER, 8, workspace, 8
-        bind = SUPER, 9, workspace, 9
-        bind = SUPER, 0, workspace, 10
-
-        bind = SUPER SHIFT, 1, movetoworkspace, 1
-        bind = SUPER SHIFT, 2, movetoworkspace, 2
-        bind = SUPER SHIFT, 3, movetoworkspace, 3
-        bind = SUPER SHIFT, 4, movetoworkspace, 4
-        bind = SUPER SHIFT, 5, movetoworkspace, 5
-        bind = SUPER SHIFT, 6, movetoworkspace, 6
-        bind = SUPER SHIFT, 7, movetoworkspace, 7
-        bind = SUPER SHIFT, 8, movetoworkspace, 8
-        bind = SUPER SHIFT, 9, movetoworkspace, 9
-        bind = SUPER SHIFT, 0, movetoworkspace, 10
-
-        bind = SUPER, mouse_up, workspace, e+1
-        bind = SUPER, mouse_down, workspace, e-1
-
-        bind = SUPER SHIFT, mouse_up, movetoworkspace, e+1
-        bind = SUPER SHIFT, mouse_down, movetoworkspace, e-1
-
-        bind = SUPER, mouse:275, togglefloating
-        bind = SUPER, mouse:276, killactive
-        bind = SUPER, mouse:274, fullscreen
-
-        bindm = SUPER, mouse:272, movewindow
-        bindm = SUPER, mouse:273, resizewindow 1
-        bindm = SUPER SHIFT, mouse:273, resizewindow 2
-      '';
-    };
   };
 
-  #fileSystems."/mnt/A" = {
-  #  device = "/dev/sdb1";
-  #  fsType = "ntfs-3g";
-  #  options = [ "defaults" ];
-  #};
-
-
-  # Install firefox.
-  programs.firefox.enable = true;
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+      if (action.id == "org.freedesktop.policykit.exec" &&
+        subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+      }
+    });
+  '';
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -350,38 +223,30 @@
   environment.systemPackages = with pkgs; [
     #dev
     vim
-    git
-    jdk
-    python313
-    qemu
-    quickemu
-    rpm-ostree
-    inputs.nix-autobahn.packages.x86_64-linux.nix-autobahn
     #files
     mpv
-    wget
-    zip
-    unzip
-    gzip
-    gnutar
-    ntfs3g
+		nemo
     #gaming
-    mangohud
     gamemode
+    gamescope
     libnvidia-container
     vulkan-tools
     mesa
-    mesa_drivers
     vulkan-loader
     glfw
+		vesktop
+    #screen
+    wl-clipboard
+    pulseaudio
+    wireplumber
+    playerctl
     #hyprland
-    kitty
+		firefox
     rofi-wayland
-    waybar
     wev
     swww
     swaynotificationcenter
-  ];
+  ]/* ++ import ./scripts.nix { inherit pkgs; }*/;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -390,35 +255,13 @@
   #   enable = true;
   #   enableSSHSupport = true;
   # };
+	programs.steam = {
+		enable = true;
+		remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+		dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+		localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
+	};
 
-  #stylix = {
-  #  enable = true;
-  #  image = /home/phoef/Pictures/Frieren.jpg;
-  #};
-
-  services.flatpak = {
-    enable = true;
-
-    remotes = lib.mkOptionDefault [{
-      name = "flathub-beta";
-      location = "https://flathub.org/beta-repo/flathub-beta.flatpakrepo";
-    }];
-
-    packages = [
-      { appId = "com.valvesoftware.Steam"; origin = "flathub"; }
-      { appId = "net.davidotek.pupgui2"; origin = "flathub"; }
-      { appId = "net.lutris.Lutris"; origin = "flathub"; }
-      { appId = "com.usebottles.bottles"; origin = "flathub"; }
-      { appId = "com.heroicgameslauncher.hgl"; origin = "flathub"; }
-      { appId = "org.ryujinx.Ryujinx"; origin = "flathub"; }
-      { appId = "com.visualstudio.code"; origin = "flathub"; }
-      { appId = "dev.vencord.Vesktop"; origin = "flathub"; }
-      { appId = "com.atlauncher.ATLauncher"; origin = "flathub"; }
-      { appId = "com.lunarclient.LunarClient"; origin = "flathub"; }
-    ];
-  };
-
-  virtualisation.waydroid.enable = true;
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
@@ -436,7 +279,7 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.05"; # Did you read the comment?
+  system.stateVersion = "unstable"; # Did you read the comment?
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 

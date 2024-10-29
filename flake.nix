@@ -2,17 +2,14 @@
   description = "My NixOS Config";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-24.05";
-    home-manager.url = "github:nix-community/home-manager/release-24.05";
+    nixpkgs.url = "nixpkgs/nixos-unstable";
+    home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.4.1";
-    stylix.url = "github:danth/stylix/release-24.05";
-    nix-autobahn.url = "github:Lassulus/nix-autobahn";
-    fabricbar.url = "/home/phoef/Projects/fabricbar";
-    fabricbar.inputs.nixpkgs.follows = "nixpkgs";
+		nixvim.url = "/home/phoef/Programs/nvy";
+		hy3.url = "github:outfoxxed/hy3";
   };
 
-  outputs = { self, nixpkgs, home-manager, nix-flatpak, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, ... }@inputs:
   let
     lib = nixpkgs.lib;
     system = "x86_64-linux";
@@ -23,18 +20,10 @@
         inherit system;
         specialArgs = {inherit inputs;};
         modules = [
-          nix-flatpak.nixosModules.nix-flatpak
-          #inputs.stylix.nixosModules.stylix
+          home-manager.nixosModules.home-manager
           ./configuration.nix
         ];
       };
     };
-
-    #homeConfigurations = {
-    #  phoef = home-manager.lib.homeManagerConfiguration {
-    #    inherit pkgs;
-    #    modules = [ ./home.nix ];
-    #  };
-    #};
   };
 }
