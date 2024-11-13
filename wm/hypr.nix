@@ -115,6 +115,7 @@
         bind = SUPER, RETURN, exec, kitty
         bind = SUPER, D, exec, killall rofi || rofi -show drun -normal-window
         bind = SUPER, W, exec, firefox
+				bind = SUPER SHIFT, S, exec, tesseract_screen
 
         bind = SUPER, Q, hy3:killactive,
 

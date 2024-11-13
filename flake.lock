@@ -552,8 +552,8 @@
         "nixvim": "nixvim_2"
       },
       "locked": {
-        "lastModified": 1729622549,
-        "narHash": "sha256-1AlfBltCIFt8VgGi6giFvMqqkfwDABmT2zPofXdi5ls=",
+        "lastModified": 1731348686,
+        "narHash": "sha256-5idlsMT76DAmCfmBswD7dBpV6nzeGN7ZzgnvMflHk7Y=",
         "path": "/home/phoef/Programs/nvy",
         "type": "path"
       },

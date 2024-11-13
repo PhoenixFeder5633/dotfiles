@@ -51,8 +51,9 @@
   };
 
   # Bootloader.
+	boot.loader.systemd-boot.enable = false;
   boot.loader.efi.canTouchEfiVariables = true;
-	boot.loader.efi.efiSysMountPoint = "/boot/efi";
+	boot.loader.efi.efiSysMountPoint = "/boot";
 	boot.loader.grub = {
 		enable = true;
 		useOSProber = true;
@@ -138,7 +139,9 @@
   };
 
   fonts.packages = with pkgs; [
-    nerdfonts
+    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+		dancing-script
+		corefonts
   ];
 
   # Enable touchpad support (enabled default in most desktopManager).
@@ -206,7 +209,7 @@
     programs.home-manager.enable = true;
   };
 
-  security.polkit.extraConfig = ''
+  security.polkit.extraConfig = /* js */ ''
     polkit.addRule(function(action, subject) {
       if (action.id == "org.freedesktop.policykit.exec" &&
         subject.isInGroup("wheel")) {
@@ -226,6 +229,7 @@
     #files
     mpv
 		nemo
+		libreoffice
     #gaming
     gamemode
     gamescope
@@ -235,6 +239,7 @@
     vulkan-loader
     glfw
 		vesktop
+		atlauncher
     #screen
     wl-clipboard
     pulseaudio
@@ -246,7 +251,7 @@
     wev
     swww
     swaynotificationcenter
-  ]/* ++ import ./scripts.nix { inherit pkgs; }*/;
+  ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
