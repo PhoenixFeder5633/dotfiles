@@ -5,7 +5,6 @@
     nixpkgs.url = "nixpkgs/nixos-unstable";
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-		nixvim.url = "/home/phoef/Programs/nvy";
 		hy3.url = "github:outfoxxed/hy3";
   };
 
